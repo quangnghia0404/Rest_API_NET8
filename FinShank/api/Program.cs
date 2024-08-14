@@ -13,6 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddControllers().AddNewtonsoftJson(Options =>
+{
+    Options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
+
 builder.Services.AddDbContext<ApplicationDBContext>(Options =>
 {
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnetion"));
@@ -20,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(Options =>
 });
 
 builder.Services.AddScoped<IstockRepository, StockRepository>();
+builder.Services.AddScoped<IcommentRepository, CommentRepository>();
 
 var app = builder.Build();
 

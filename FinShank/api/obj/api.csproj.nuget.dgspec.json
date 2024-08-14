@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\projects.NET\\JunProject\\FinShank\\api\\api.csproj": {}
+    "D:\\projects.NET\\Rest_API_NET8\\FinShank\\api\\api.csproj": {}
   },
   "projects": {
-    "D:\\projects.NET\\JunProject\\FinShank\\api\\api.csproj": {
+    "D:\\projects.NET\\Rest_API_NET8\\FinShank\\api\\api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projects.NET\\JunProject\\FinShank\\api\\api.csproj",
+        "projectUniqueName": "D:\\projects.NET\\Rest_API_NET8\\FinShank\\api\\api.csproj",
         "projectName": "api",
-        "projectPath": "D:\\projects.NET\\JunProject\\FinShank\\api\\api.csproj",
+        "projectPath": "D:\\projects.NET\\Rest_API_NET8\\FinShank\\api\\api.csproj",
         "packagesPath": "C:\\Users\\Brandy\\.nuget\\packages\\",
-        "outputPath": "D:\\projects.NET\\JunProject\\FinShank\\api\\obj\\",
+        "outputPath": "D:\\projects.NET\\Rest_API_NET8\\FinShank\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Brandy\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -45,6 +45,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.7, )"
@@ -64,6 +68,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
