@@ -9,6 +9,9 @@ using api.Dtos;
 using api.Dtos.Comment;
 using Microsoft.EntityFrameworkCore;
 using api.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using api.Models;
+using api.Extensions;
 
 
 
@@ -20,10 +23,13 @@ namespace api.Controllers
     {
         private readonly IcommentRepository _commentRepo;
         private readonly IstockRepository _stockRepo;
-        public CommentController(IcommentRepository commentRepo, IstockRepository stockReposiroty)
+        private readonly UserManager<AppUser> _userManager;
+        public CommentController(IcommentRepository commentRepo, IstockRepository stockReposiroty,
+        UserManager<AppUser> userManager)
         {
             _commentRepo = commentRepo;
             _stockRepo = stockReposiroty;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -70,9 +76,15 @@ namespace api.Controllers
             {
                 return BadRequest("Stock does not exists!!");
             }
-            var commentModel = commentDto.ToCommentCreate(stockId);
+
+            var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            var commentModel = commentDto.ToCommentFromCreate(stockId);
+            commentModel.AppUserId = appUser.Id;
             await _commentRepo.CreateAsync(commentModel);
-            return CreatedAtAction(nameof(GetById), new { id = commentModel }, commentModel.ToCommentDto());
+
+            return CreatedAtAction(nameof(GetById), new { id = commentModel.Id }, commentModel.ToCommentDto());
         }
 
         [HttpPut]
@@ -83,7 +95,7 @@ namespace api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var comment = await _commentRepo.Updateasync(id, updateCommentDto.ToCommentUpdate());
+            var comment = await _commentRepo.Updateasync(id, updateCommentDto.ToCommentFromUpdate(id));
 
             if (comment == null)
             {

@@ -95,10 +95,13 @@ namespace api.Controllers
             {
                 return Unauthorized("Username not found and/or password incorrect");
             }
+
+            string usernamelogin = user.UserName;
+
             return Ok(
                 new NewUserDto
                 {
-                    Username = user.UserName,
+                    Username = usernamelogin,
                     Email = user.Email,
                     Token = _tokenService.CteateToken(user)
                 }
