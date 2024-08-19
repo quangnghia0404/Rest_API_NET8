@@ -66,7 +66,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IstockRepository, StockRepository>();
 builder.Services.AddScoped<IcommentRepository, CommentRepository>();
 
-builder.Services.AddScoped<ItokenService, TokenService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
