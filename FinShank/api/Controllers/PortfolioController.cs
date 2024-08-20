@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using api.Dtos;
 using api.Extensions;
 using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -17,40 +15,28 @@ namespace api.Controllers
     [ApiController]
     public class PortfolioController : ControllerBase
     {
-
         private readonly UserManager<AppUser> _userManager;
         private readonly IstockRepository _stockRepo;
         private readonly IPortfolioRepository _portfolioRepo;
-        public PortfolioController(UserManager<AppUser> userManager, IstockRepository stockRepo, IPortfolioRepository portfolioRepository)
+        private readonly IFMPService _fmpService;
+        public PortfolioController(UserManager<AppUser> userManager,
+        IstockRepository stockRepo, IPortfolioRepository portfolioRepo,
+        IFMPService fmpService)
         {
             _userManager = userManager;
             _stockRepo = stockRepo;
-            _portfolioRepo = portfolioRepository;
-
+            _portfolioRepo = portfolioRepo;
+            _fmpService = fmpService;
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetUserPortfolio()
         {
-
-            var username = User.GetUsername(); // Lấy tên người dùng từ claims
-
-            if (string.IsNullOrEmpty(username))
-            {
-                return BadRequest("Username not found in claims.");
-            }
-
+            var username = User.GetUsername();
             var appUser = await _userManager.FindByNameAsync(username);
-
-            if (appUser == null)
-            {
-                return NotFound("User not found.");
-            }
-
             var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser);
             return Ok(userPortfolio);
-
         }
 
         [HttpPost]
@@ -59,8 +45,20 @@ namespace api.Controllers
         {
             var username = User.GetUsername();
             var appUser = await _userManager.FindByNameAsync(username);
-
             var stock = await _stockRepo.GetBySymbolAsync(symbol);
+
+            if (stock == null)
+            {
+                stock = await _fmpService.FindStockBySymbolAsync(symbol);
+                if (stock == null)
+                {
+                    return BadRequest("Stock does not exists");
+                }
+                else
+                {
+                    await _stockRepo.CreateAsync(stock);
+                }
+            }
 
             if (stock == null) return BadRequest("Stock not found");
 
@@ -78,7 +76,7 @@ namespace api.Controllers
 
             if (portfolioModel == null)
             {
-                return StatusCode(500, "Could not create!!");
+                return StatusCode(500, "Could not create");
             }
             else
             {
@@ -108,5 +106,6 @@ namespace api.Controllers
 
             return Ok();
         }
+
     }
 }
